@@ -16,15 +16,25 @@ const (
 // world represents global object that holds the state of the game.
 type world struct {
 	player *player
+	basicEnemiesSquad []*basicEnemy
 }
 
 func newWorld() (*world, error) {
 	w := &world{}
 	var err error
+
+	// Init player
 	w.player, err = newPlayer()
 	if err != nil {
 		return nil, err
 	}
+
+	// Init basic enemies squad
+	w.basicEnemiesSquad, err = initBasicEnemiesSquad()
+	if err != nil {
+		return nil, err
+	}
+
 	return w, nil
 }
 
@@ -37,6 +47,11 @@ func (w *world) eventLoop() func(screen *ebiten.Image) error {
 
 		// Handle player's control
 		w.player.handleControl()
+
+		// Draw enemies
+		for _, e := range w.basicEnemiesSquad {
+			e.draw(screen)
+		}
 
 		return nil
 	}

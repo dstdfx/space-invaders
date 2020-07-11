@@ -39,7 +39,7 @@ func newPlayer() (*player, error) {
 func (p *player) draw(dst *ebiten.Image) {
 	w, h := p.image.Size()
 	op := &ebiten.DrawImageOptions{}
-	// Calculate the center of the player
+	// Calculate the center of the object
 	op.GeoM.Translate(-float64(w)/2, -float64(h)/2)
 	op.GeoM.Translate(p.x, p.y)
 	_ = dst.DrawImage(p.image, op)
