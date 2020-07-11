@@ -1,10 +1,11 @@
 package main
 
 import (
+	"image/color"
 	_ "image/png"
+	"log"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
 const (
@@ -12,18 +13,41 @@ const (
 	windowHeight = 800
 )
 
-func eventLoop() func(screen *ebiten.Image) error {
+// world represents global object that holds the state of the game.
+type world struct {
+	player *player
+}
+
+func newWorld() (*world, error) {
+	w := &world{}
+	var err error
+	w.player, err = newPlayer()
+	if err != nil {
+		return nil, err
+	}
+	return w, nil
+}
+
+func (w *world) eventLoop() func(screen *ebiten.Image) error {
 	return func(screen *ebiten.Image) error {
+		screen.Set(windowWidth, windowHeight, color.Black)
 
-		// TODO: implement me
+		// Draw player
+		w.player.draw(screen)
 
-		ebitenutil.DebugPrintAt(screen, "Hello, World!", 150, 150)
+		// Handle player's control
+		w.player.handleControl()
 
 		return nil
 	}
 }
 
 func main() {
+	w, err := newWorld()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	ebiten.SetRunnableInBackground(true)
-	ebiten.Run(eventLoop(), windowWidth, windowHeight, 1, "Space Invaders")
+	ebiten.Run(w.eventLoop(), windowWidth, windowHeight, 1, "Space Invaders")
 }
