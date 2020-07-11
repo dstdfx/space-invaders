@@ -20,13 +20,13 @@ const (
 type basicEnemy struct {
 	x      float64
 	y      float64
-	image  *ebiten.Image
 	frames []*ebiten.Image
 	currentFrame int
 	lastFrameChangedAt time.Time
 }
 
 func newBasicEnemy(x, y float64) (*basicEnemy, error){
+	// TODO: load frames once and reuse them
 	frame0, _, err := ebitenutil.NewImageFromFile("sprites/basic_enemy_f0.png", ebiten.FilterDefault)
 	if err != nil {
 		return nil, err
@@ -40,7 +40,6 @@ func newBasicEnemy(x, y float64) (*basicEnemy, error){
 	basicEnemy := &basicEnemy{
 		x:      x,
 		y:      y,
-		image:  frame0,
 		frames: []*ebiten.Image{frame0, frame1},
 	}
 
@@ -48,12 +47,12 @@ func newBasicEnemy(x, y float64) (*basicEnemy, error){
 }
 
 func (be *basicEnemy) draw(dst *ebiten.Image) {
-	w, h := be.image.Size()
+	w, h := be.frames[be.currentFrame].Size()
 	op := &ebiten.DrawImageOptions{}
 	// Calculate the center of the object
 	op.GeoM.Translate(-float64(w)/2, -float64(h)/2)
 	op.GeoM.Translate(be.x, be.y)
-	_ = dst.DrawImage(be.image, op)
+	_ = dst.DrawImage(be.frames[be.currentFrame], op)
 }
 
 func (be *basicEnemy) update() {
@@ -67,6 +66,5 @@ func (be *basicEnemy) update() {
 		be.currentFrame--
 	}
 
-	be.image = be.frames[be.currentFrame]
 	be.lastFrameChangedAt = time.Now().UTC()
 }
