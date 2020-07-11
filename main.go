@@ -65,5 +65,8 @@ func main() {
 	}
 
 	ebiten.SetRunnableInBackground(true)
-	ebiten.Run(w.eventLoop(), windowWidth, windowHeight, 1, "Space Invaders")
+	err = ebiten.Run(w.eventLoop(), windowWidth, windowHeight, 1, "Space Invaders")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
