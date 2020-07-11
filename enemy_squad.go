@@ -47,6 +47,8 @@ func (es *enemySquad) update() {
 		} else if es.direction == leftDirection {
 			be.x -= basicEnemySpeed
 		}
+		// Update enemies' frames
+		be.update()
 	}
 
 	// Check if we need to go down
