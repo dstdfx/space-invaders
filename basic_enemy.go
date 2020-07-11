@@ -1,9 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"time"
-
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
@@ -11,14 +8,16 @@ import (
 const (
 	basicEnemySize = 49
 	basicEnemySpeed = 3
+	basicEnemyMoveDownSpeed = 3
 )
+
+// TODO: generalize enemies to be able to have squads of different enemies
 
 // basicEnemy represents basic enemy entity.
 type basicEnemy struct {
 	x float64
 	y float64
 	image *ebiten.Image
-	lastMove time.Time
 }
 
 func newBasicEnemy(x, y float64) (*basicEnemy, error){
@@ -31,8 +30,8 @@ func newBasicEnemy(x, y float64) (*basicEnemy, error){
 		x: x,
 		y: y,
 		image: basicEnemyImg,
-		lastMove: time.Now().UTC(),
 	}
+
 	return basicEnemy, nil
 }
 
@@ -45,25 +44,3 @@ func (be *basicEnemy) draw(dst *ebiten.Image) {
 	op.GeoM.Translate(be.x, be.y)
 	_ = dst.DrawImage(be.image, op)
 }
-
-
-func initBasicEnemiesSquad() ([]*basicEnemy, error){
-	basicEnemies := make([]*basicEnemy, 0)
-
-	// Init enemies
-	for i:=0;i<8; i++ {
-		for j:=0;j<5;j++ {
-			x := (float64(i)/8) * windowWidth + basicEnemySize / 2
-			y := float64(j) * basicEnemySize + basicEnemySize / 2
-			be, err := newBasicEnemy(x, y)
-			if err != nil {
-				return nil, err
-			}
-			basicEnemies = append(basicEnemies, be)
-			fmt.Println("X, Y=", x, y)
-		}
-	}
-
-	return basicEnemies, nil
-}
-

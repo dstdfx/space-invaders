@@ -33,6 +33,7 @@ func newPlayer() (*player, error) {
 		y: windowHeight - playerSize,
 		image: playerImg,
 	}
+
 	return player, nil
 }
 
