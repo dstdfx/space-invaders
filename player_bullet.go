@@ -8,19 +8,19 @@ import (
 )
 
 const (
-	playerBulletSize = 16
+	playerBulletSize   = 16
 	playerBulletRadius = 1
-	playerBulletSpeed = 15
+	playerBulletSpeed  = 15
 )
 
 // playerBullet represents player's bullet entity.
 type playerBullet struct {
-	x float64
-	y float64
-	image *ebiten.Image
-	angle float64
+	x        float64
+	y        float64
+	image    *ebiten.Image
+	angle    float64
 	isActive bool
-	radius float64
+	radius   float64
 }
 
 func newPlayerBullet() (*playerBullet, error) {
@@ -30,9 +30,9 @@ func newPlayerBullet() (*playerBullet, error) {
 	}
 
 	bullet := &playerBullet{
-		x: windowWidth / 2,
-		y: windowHeight - playerBulletSize,
-		image: bulletImg,
+		x:      windowWidth / 2,
+		y:      windowHeight - playerBulletSize,
+		image:  bulletImg,
 		radius: playerBulletRadius,
 	}
 
@@ -51,7 +51,7 @@ func (b *playerBullet) draw(dst *ebiten.Image) {
 	_ = dst.DrawImage(b.image, op)
 }
 
-func (b *playerBullet) update(){
+func (b *playerBullet) update() {
 	b.x += playerBulletSpeed * math.Cos(b.angle)
 	b.y += playerBulletSpeed * math.Sin(b.angle)
 

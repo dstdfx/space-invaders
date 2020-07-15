@@ -10,17 +10,17 @@ import (
 )
 
 const (
-	playerSize = 87
-	playerSpeed = 7
+	playerSize    = 87
+	playerSpeed   = 7
 	shootCooldown = time.Millisecond * 250
 )
 
 // player represents player entity.
 type player struct {
-	x float64
-	y float64
-	image *ebiten.Image
-	lastShoot time.Time
+	x          float64
+	y          float64
+	image      *ebiten.Image
+	lastShoot  time.Time
 	bulletPool []*playerBullet
 }
 
@@ -34,8 +34,8 @@ func newPlayer() (*player, error) {
 	// Start point of the player should be on the bottom line
 	// of the screen in the center.
 	player := &player{
-		x: windowWidth / 2,
-		y: windowHeight - playerSize,
+		x:     windowWidth / 2,
+		y:     windowHeight - playerSize,
 		image: playerImg,
 	}
 
@@ -70,7 +70,7 @@ func (p *player) handleControl() {
 	// Right side control
 	if ebiten.IsKeyPressed(ebiten.KeyD) || ebiten.IsKeyPressed(ebiten.KeyRight) {
 		// Respect right border
-		if p.x + playerSpeed < windowWidth - playerSize / 2 {
+		if p.x+playerSpeed < windowWidth-playerSize/2 {
 			p.x += playerSpeed
 			return
 		}
@@ -79,7 +79,7 @@ func (p *player) handleControl() {
 	// Left side control
 	if ebiten.IsKeyPressed(ebiten.KeyA) || ebiten.IsKeyPressed(ebiten.KeyLeft) {
 		// Respect left border
-		if p.x - playerSpeed - playerSize / 2 > 0 {
+		if p.x-playerSpeed-playerSize/2 > 0 {
 			p.x -= playerSpeed
 			return
 		}
@@ -92,7 +92,7 @@ func (p *player) handleControl() {
 		}
 
 		// Make sure that bullet comes from the right position
-		p.shoot(p.x, p.y - playerBulletSize)
+		p.shoot(p.x, p.y-playerBulletSize)
 		p.lastShoot = time.Now().UTC()
 	}
 }
@@ -109,7 +109,7 @@ func (p *player) shoot(x, y float64) {
 }
 
 func (p *player) initBulletPool() error {
-	for i:=0;i<10;i++{
+	for i := 0; i < 10; i++ {
 		pb, err := newPlayerBullet()
 		if err != nil {
 			return err

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/hajimehoshi/ebiten"
 )
 
@@ -14,18 +12,18 @@ const (
 // enemySquad represents a common entity that describes a bunch of enemies.
 type enemySquad struct {
 	basicEnemies []*basicEnemy
-	direction int
+	direction    int
 }
 
-func newEnemySquad(rows int) (*enemySquad, error){
+func newEnemySquad(rows int) (*enemySquad, error) {
 	sq := &enemySquad{direction: rightDirection}
-	sq.basicEnemies = make([]*basicEnemy, 0, rows + 7)
+	sq.basicEnemies = make([]*basicEnemy, 0, rows+7)
 
 	// Init enemies
-	for i:=0;i<8; i++ {
-		for j:=0;j<rows;j++ {
-			x := (float64(i)/10) * windowWidth + basicEnemySize / 2
-			y := float64(j) * basicEnemySize + basicEnemySize / 2
+	for i := 0; i < 8; i++ {
+		for j := 0; j < rows; j++ {
+			x := (float64(i)/10)*windowWidth + basicEnemySize/2
+			y := float64(j)*basicEnemySize + basicEnemySize/2
 			be, err := newBasicEnemy(x, y)
 			if err != nil {
 				return nil, err
@@ -69,7 +67,6 @@ func (es *enemySquad) update(bullets []*playerBullet) {
 			if collides(enemyCircle, bulletCircle) && be.isActive && b.isActive {
 				be.isActive = false
 				b.isActive = false
-				fmt.Println("COLLISION IS FOUND")
 			}
 		}
 
@@ -102,4 +99,3 @@ func (es *enemySquad) moveEnemiesDown() {
 		be.y += basicEnemyMoveDownSpeed
 	}
 }
-

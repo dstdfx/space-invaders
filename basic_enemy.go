@@ -8,10 +8,10 @@ import (
 )
 
 const (
-	basicEnemySize = 49
-	basicEnemyRadius = 18
-	basicEnemySpeed = 3
-	basicEnemyMoveDownSpeed = 3
+	basicEnemySize                = 49
+	basicEnemyRadius              = 18
+	basicEnemySpeed               = 3
+	basicEnemyMoveDownSpeed       = 3
 	basicEnemyFrameChangeCooldown = 500 * time.Millisecond
 )
 
@@ -25,10 +25,10 @@ type basicEnemy struct {
 	currentFrame       int
 	lastFrameChangedAt time.Time
 	isActive           bool
-	radius float64
+	radius             float64
 }
 
-func newBasicEnemy(x, y float64) (*basicEnemy, error){
+func newBasicEnemy(x, y float64) (*basicEnemy, error) {
 	// TODO: load frames once and reuse them
 	frame0, _, err := ebitenutil.NewImageFromFile("sprites/basic_enemy_f0.png", ebiten.FilterDefault)
 	if err != nil {
@@ -45,14 +45,13 @@ func newBasicEnemy(x, y float64) (*basicEnemy, error){
 		y:        y,
 		frames:   []*ebiten.Image{frame0, frame1},
 		isActive: true,
-		radius: basicEnemyRadius,
+		radius:   basicEnemyRadius,
 	}
 
 	return basicEnemy, nil
 }
 
 func (be *basicEnemy) draw(dst *ebiten.Image) {
-	// Skip dead enemies
 	if !be.isActive {
 		return
 	}

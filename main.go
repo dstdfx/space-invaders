@@ -9,13 +9,13 @@ import (
 )
 
 const (
-	windowWidth = 600
+	windowWidth  = 600
 	windowHeight = 800
 )
 
 // world represents global object that holds the state of the game.
 type world struct {
-	player *player
+	player            *player
 	basicEnemiesSquad *enemySquad
 }
 
