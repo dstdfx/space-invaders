@@ -9,6 +9,7 @@ import (
 
 const (
 	playerBulletSize = 16
+	playerBulletRadius = 1
 	playerBulletSpeed = 15
 )
 
@@ -19,6 +20,7 @@ type playerBullet struct {
 	image *ebiten.Image
 	angle float64
 	isActive bool
+	radius float64
 }
 
 func newPlayerBullet() (*playerBullet, error) {
@@ -31,6 +33,7 @@ func newPlayerBullet() (*playerBullet, error) {
 		x: windowWidth / 2,
 		y: windowHeight - playerBulletSize,
 		image: bulletImg,
+		radius: playerBulletRadius,
 	}
 
 	return bullet, nil

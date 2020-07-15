@@ -9,6 +9,7 @@ import (
 
 const (
 	basicEnemySize = 49
+	basicEnemyRadius = 18
 	basicEnemySpeed = 3
 	basicEnemyMoveDownSpeed = 3
 	basicEnemyFrameChangeCooldown = 500 * time.Millisecond
@@ -18,11 +19,13 @@ const (
 
 // basicEnemy represents basic enemy entity.
 type basicEnemy struct {
-	x      float64
-	y      float64
-	frames []*ebiten.Image
-	currentFrame int
+	x                  float64
+	y                  float64
+	frames             []*ebiten.Image
+	currentFrame       int
 	lastFrameChangedAt time.Time
+	isActive           bool
+	radius float64
 }
 
 func newBasicEnemy(x, y float64) (*basicEnemy, error){
@@ -38,15 +41,22 @@ func newBasicEnemy(x, y float64) (*basicEnemy, error){
 	}
 
 	basicEnemy := &basicEnemy{
-		x:      x,
-		y:      y,
-		frames: []*ebiten.Image{frame0, frame1},
+		x:        x,
+		y:        y,
+		frames:   []*ebiten.Image{frame0, frame1},
+		isActive: true,
+		radius: basicEnemyRadius,
 	}
 
 	return basicEnemy, nil
 }
 
 func (be *basicEnemy) draw(dst *ebiten.Image) {
+	// Skip dead enemies
+	if !be.isActive {
+		return
+	}
+
 	w, h := be.frames[be.currentFrame].Size()
 	op := &ebiten.DrawImageOptions{}
 	// Calculate the center of the object

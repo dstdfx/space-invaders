@@ -52,7 +52,7 @@ func (w *world) eventLoop() func(screen *ebiten.Image) error {
 		w.basicEnemiesSquad.draw(screen)
 
 		// Update enemies squad
-		w.basicEnemiesSquad.update()
+		w.basicEnemiesSquad.update(w.player.bulletPool)
 
 		return nil
 	}

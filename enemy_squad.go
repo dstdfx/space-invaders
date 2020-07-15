@@ -1,6 +1,10 @@
 package main
 
-import "github.com/hajimehoshi/ebiten"
+import (
+	"fmt"
+
+	"github.com/hajimehoshi/ebiten"
+)
 
 const (
 	rightDirection = iota
@@ -39,7 +43,7 @@ func (es *enemySquad) draw(dst *ebiten.Image) {
 	}
 }
 
-func (es *enemySquad) update() {
+func (es *enemySquad) update(bullets []*playerBullet) {
 	for _, be := range es.basicEnemies {
 		// Make a move depend on the current direction
 		if es.direction == rightDirection {
@@ -47,6 +51,28 @@ func (es *enemySquad) update() {
 		} else if es.direction == leftDirection {
 			be.x -= basicEnemySpeed
 		}
+
+		enemyCircle := circle{
+			x:      be.x,
+			y:      be.y,
+			radius: be.radius,
+		}
+
+		// Check for collision
+		for _, b := range bullets {
+			bulletCircle := circle{
+				x:      b.x,
+				y:      b.y,
+				radius: b.radius,
+			}
+
+			if collides(enemyCircle, bulletCircle) && be.isActive && b.isActive {
+				be.isActive = false
+				b.isActive = false
+				fmt.Println("COLLISION IS FOUND")
+			}
+		}
+
 		// Update enemies' frames
 		be.update()
 	}
