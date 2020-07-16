@@ -66,6 +66,7 @@ func (es *enemySquad) update(bullets []*playerBullet) {
 
 			if collides(enemyCircle, bulletCircle) && be.isActive && b.isActive {
 				be.isActive = false
+				be.currentSequence = basicEnemyDestroySequence
 				b.isActive = false
 			}
 		}

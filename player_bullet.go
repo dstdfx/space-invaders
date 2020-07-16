@@ -4,7 +4,6 @@ import (
 	"math"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
 const (
@@ -24,7 +23,7 @@ type playerBullet struct {
 }
 
 func newPlayerBullet() (*playerBullet, error) {
-	bulletImg, _, err := ebitenutil.NewImageFromFile("sprites/player_bullet.png", ebiten.FilterDefault)
+	bulletImg, err := loadImage("sprites/player_bullet.png")
 	if err != nil {
 		return nil, err
 	}

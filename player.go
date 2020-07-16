@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
 const (
@@ -25,7 +24,7 @@ type player struct {
 }
 
 func newPlayer() (*player, error) {
-	playerImg, _, err := ebitenutil.NewImageFromFile("sprites/player.png", ebiten.FilterDefault)
+	playerImg, err := loadImage("sprites/player.png")
 	if err != nil {
 		log.Println(err)
 		return nil, err
