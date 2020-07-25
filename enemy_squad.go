@@ -143,7 +143,11 @@ func (es *enemySquad) getAllBottomEnemies() []*basicEnemy {
 				lowestEnemy = e
 			}
 		}
-		bottomEnemies = append(bottomEnemies, lowestEnemy)
+
+		if lowestEnemy != nil {
+			bottomEnemies = append(bottomEnemies, lowestEnemy)
+
+		}
 	}
 
 	return bottomEnemies
@@ -184,28 +188,18 @@ func (es *enemySquad) randomEnemyShoot(enemies []*basicEnemy) {
 	if time.Since(es.lastShoot) < enemyShootCooldown {
 		return
 	}
-
 	source := rand.New(rand.NewSource(time.Now().Unix()))
-
-	var shooter *basicEnemy
-	if len(enemies) > 1 {
-		shooter = enemies[source.Intn(len(enemies)-1)]
-	} else if len(enemies) == 0 {
-		shooter = enemies[0]
-	}
-
-	if shooter == nil {
+	if len(enemies) == 0 {
 		return
 	}
+	shooter := enemies[source.Intn(len(enemies))]
 
 	b, ok := es.getBulletFromPool()
-	if !ok {
-		return
+	if ok {
+		b.x = shooter.x
+		b.y = shooter.y
+		b.angle = 270 * (math.Pi / 180)
+		b.isActive = true
+		es.lastShoot = time.Now().UTC()
 	}
-
-	b.x = shooter.x
-	b.y = shooter.y
-	b.angle = 270 * (math.Pi / 180)
-	b.isActive = true
-	es.lastShoot = time.Now().UTC()
 }
