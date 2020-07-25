@@ -92,7 +92,6 @@ func (p *player) handleControl() {
 
 		// Make sure that bullet comes from the right position
 		p.shoot(p.x, p.y-playerBulletSize)
-		p.lastShoot = time.Now().UTC()
 	}
 }
 
@@ -102,6 +101,7 @@ func (p *player) shoot(x, y float64) {
 		b.x = x
 		b.y = y
 		b.angle = 270 * (math.Pi / 180)
+		p.lastShoot = time.Now().UTC()
 	} else {
 		log.Println("bullet pool is empty")
 	}
