@@ -1,6 +1,10 @@
 package main
 
 import (
+	"math"
+	"math/rand"
+	"time"
+
 	"github.com/hajimehoshi/ebiten"
 )
 
@@ -9,15 +13,19 @@ const (
 	leftDirection
 )
 
+const enemyShootCooldown = time.Millisecond * 500
+
 // enemySquad represents a common entity that describes a bunch of enemies.
 type enemySquad struct {
 	basicEnemies []*basicEnemy
+	bulletPool   []*basicEnemyBullet
 	direction    int
+	lastShoot    time.Time
 }
 
 func newEnemySquad(rows int) (*enemySquad, error) {
-	sq := &enemySquad{direction: rightDirection}
-	sq.basicEnemies = make([]*basicEnemy, 0, rows+7)
+	es := &enemySquad{direction: rightDirection}
+	es.basicEnemies = make([]*basicEnemy, 0, rows+7)
 
 	// Init enemies
 	for i := 0; i < 8; i++ {
@@ -28,16 +36,27 @@ func newEnemySquad(rows int) (*enemySquad, error) {
 			if err != nil {
 				return nil, err
 			}
-			sq.basicEnemies = append(sq.basicEnemies, be)
+			es.basicEnemies = append(es.basicEnemies, be)
 		}
 	}
 
-	return sq, nil
+	// init basic's enemy bullet pool
+	if err := es.initBulletPool(); err != nil {
+		return nil, err
+	}
+
+	return es, nil
 }
 
 func (es *enemySquad) draw(dst *ebiten.Image) {
+	// Draw enemies
 	for _, be := range es.basicEnemies {
 		be.draw(dst)
+	}
+
+	// Draw bullets
+	for _, b := range es.bulletPool {
+		b.draw(dst)
 	}
 }
 
@@ -79,6 +98,14 @@ func (es *enemySquad) update(bullets []*playerBullet) {
 	if es.hasChangedDirection() {
 		es.moveEnemiesDown()
 	}
+
+	// Make bottom enemies shoot
+	es.randomEnemyShoot(es.getAllBottomEnemies())
+
+	// Update bullets
+	for _, b := range es.bulletPool {
+		b.update()
+	}
 }
 
 func (es *enemySquad) hasChangedDirection() bool {
@@ -99,4 +126,86 @@ func (es *enemySquad) moveEnemiesDown() {
 	for _, be := range es.basicEnemies {
 		be.y += basicEnemyMoveDownSpeed
 	}
+}
+
+func (es *enemySquad) getAllBottomEnemies() []*basicEnemy {
+	allXPositions := es.getAllXPositions()
+	bottomEnemies := make([]*basicEnemy, 0)
+
+	for _, x := range allXPositions {
+		var (
+			bestY       float64
+			lowestEnemy *basicEnemy
+		)
+		for _, e := range es.basicEnemies {
+			if e.x == x && e.y > bestY && e.isActive {
+				bestY = e.y
+				lowestEnemy = e
+			}
+		}
+		bottomEnemies = append(bottomEnemies, lowestEnemy)
+	}
+
+	return bottomEnemies
+}
+
+func (es *enemySquad) getAllXPositions() []float64 {
+	xs := make([]float64, 0, len(es.basicEnemies))
+	for _, e := range es.basicEnemies {
+		xs = append(xs, e.x)
+	}
+
+	return xs
+}
+
+func (es *enemySquad) initBulletPool() error {
+	for i := 0; i < 10; i++ {
+		pb, err := newBasicEnemyBullet()
+		if err != nil {
+			return err
+		}
+		es.bulletPool = append(es.bulletPool, pb)
+	}
+
+	return nil
+}
+
+func (es *enemySquad) getBulletFromPool() (*basicEnemyBullet, bool) {
+	for _, b := range es.bulletPool {
+		if !b.isActive {
+			return b, true
+		}
+	}
+
+	return nil, false
+}
+
+func (es *enemySquad) randomEnemyShoot(enemies []*basicEnemy) {
+	if time.Since(es.lastShoot) < enemyShootCooldown {
+		return
+	}
+
+	source := rand.New(rand.NewSource(time.Now().Unix()))
+
+	var shooter *basicEnemy
+	if len(enemies) > 1 {
+		shooter = enemies[source.Intn(len(enemies)-1)]
+	} else if len(enemies) == 0 {
+		shooter = enemies[0]
+	}
+
+	if shooter == nil {
+		return
+	}
+
+	b, ok := es.getBulletFromPool()
+	if !ok {
+		return
+	}
+
+	b.x = shooter.x
+	b.y = shooter.y
+	b.angle = 270 * (math.Pi / 180)
+	b.isActive = true
+	es.lastShoot = time.Now().UTC()
 }
